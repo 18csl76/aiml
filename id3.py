@@ -1,12 +1,11 @@
 import pandas as pd
 import warnings
-from pandas import DataFrame
+# from pandas import DataFrame
 
 from pandas.core.common import SettingWithCopyWarning
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
-df_tennis = pd.read_csv('tennis.csv')
-df_tennis.keys()[0]
+df_tennis = pd.read_csv('tennis1.csv')
 
 def entropy(probs):
     import math
@@ -21,7 +20,7 @@ def entropy_of_list(a_list):
 
 
 total_entropy = entropy_of_list(df_tennis['PlayTennis'])
-print("\n Total Entropy of PlayTennis Data Set:",total_entropy)###
+print("\n Total Entropy of PlayTennis Data Set:",total_entropy)
 
 def information_gain(df, split_attribute_name, target_attribute_name, trace=0):
     df_split = df.groupby(split_attribute_name)
@@ -36,7 +35,7 @@ def information_gain(df, split_attribute_name, target_attribute_name, trace=0):
     return old_entropy - new_entropy
 
 
-print('\n\n Info-gain for Outlook is :'+str( information_gain(df_tennis, 'Outlook', 'PlayTennis')),"\n")####
+print('\n\n Info-gain for Outlook is :'+str( information_gain(df_tennis, 'Outlook', 'PlayTennis')),"\n")
 print('\n Info-gain for Humidity is: ' + str( information_gain(df_tennis, 'Humidity', 'PlayTennis')),"\n")
 print('\n Info-gain for Wind is:' + str( information_gain(df_tennis, 'Wind', 'PlayTennis')),"\n")
 print('\n Info-gain for Temperature is:' + str( information_gain(df_tennis, 'Temperature','PlayTennis')),"\n")
@@ -68,11 +67,12 @@ def id3(df, target_attribute_name, attribute_names, default_class=None):
                         default_class)
             tree[best_attr][attr_val] = subtree
         return tree
+    
 attribute_names = list(df_tennis.columns)
 attribute_names.remove('PlayTennis')
 from pprint import pprint
 tree = id3(df_tennis,'PlayTennis',attribute_names)
-print("\n\nThe Resultant Decision Tree is :\n")###
+print("\n\nThe Resultant Decision Tree is :\n")
 pprint(tree)
 attribute = next(iter(tree))
 
@@ -88,9 +88,9 @@ def classify(instance, tree, default=None):
             return result
     else:
         return default
-df_tennis['predicted'] = df_tennis.apply(classify, axis=1, args=(tree,'No') )
+    
+df_tennis['actual'] = df_tennis.apply(classify, axis=1, args=(tree,'No') )
 
-df_tennis[['PlayTennis', 'predicted']]
 training_data = df_tennis.iloc[1:-4]
 test_data  = df_tennis.iloc[-4:]
 train_tree = id3(training_data, 'PlayTennis', attribute_names)
